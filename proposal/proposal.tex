@@ -1,0 +1,95 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\usepackage{epsfig}
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[osf]{mathpazo}
+
+\linespread{1.1}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem*{lem}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{notation}{Notation}
+\newtheorem*{claim}{Claim}
+\newtheorem*{fclaim}{False Claim}
+\newtheorem{observation}{Observation}
+\newtheorem{conjecture}[lemma]{Conjecture}
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{corollary}[lemma]{Corollary}
+\newtheorem{proposition}[lemma]{Proposition}
+\newtheorem*{rt}{Running Time}
+
+\setlength{\textwidth}{6.3in}
+\renewcommand{\labelenumi}{\bf \alph{enumi}.}
+
+\renewcommand{\maketitle}{
+  \begin{center}
+    \begin{flushright}
+      CS364 \\
+      Project Proposal
+    \end{flushright}
+    \rule{\linewidth}{0.1mm}
+  \end{center}
+}
+
+\newcommand{\honor}{
+  \begin{center}
+    I affirm that I have adhered to the Honor Code in this assignment.
+  \end{center}
+}
+
+\newcommand{\pwoof}{
+  \hfill $\boxtimes$
+}
+
+\newcommand{\gramarrow}[2]{
+  \overset{#1}{\underset{#2}{\longrightarrow}}
+}
+
+\newcommand{\collabs}[1]{
+  \begin{center}
+    Collaborators: #1
+  \end{center}
+}
+
+\begin{document}
+\maketitle
+\subsection*{Name}
+bee.rs.
+\subsection*{Team}
+Sayer Rippey, Oren Shoham, Peter Fogg.
+\subsection*{Problem}
+There's a lot of beer in the world. You, as as someone of discerning taste, require the finest of quality. But you don't have time to try every beer in the world (if only!). How do you know you'll like a beer before you even try it? The answer, of course, is machine learning!
+
+We propose to design a machine learning program to recommend beer to the user, based on beers they like and dislike. That is, given an input set of beers liked and disliked, we will return a set of possibly liked beers as recommendations.
+\subsection*{Approach}
+We will use web scraping and NLP techniques to gather data from a variety of beer review websites,\footnote{beeradvocate.com, thebeercritic.com, ratebeer.com, etc.} and build a database of beers along with attributes that we will select from this data. Given the input set of beers, we will train a machine learning algorithm to classify other beers as liked or disliked. We then return a set of liked beers to the user, who presumably then tries said beers.
+\subsection*{Data}
+Data will be obtained from the aforementioned beer review websites. A beer will be represented as a vector of attributes, some binary (is it hoppy?) and some multi-valued (the style -- IPA, stout, etc.).
+\subsection*{Evaluation}
+Given that the system should evaluate a user's preferences, we will test the system on that user. So if a user likes beers that have been recommended, or if beers which they enjoy are among the recommendations, then the system is performing well. We can also compare the user's recommendations against the set of beers that a user of Beer Advocate or another site with similar preferences would like. Another evaluation would be to take a user from one of the websites, train the algorithm on half of their reviews, test on the other half, and see if it classifies the beers correctly.
+\subsection*{Background Reading}
+\begin{itemize}
+\item \verb+http://cs229.stanford.edu/proj2012/Wilson-BeerRecommendationEngine.pdf+
+\item \verb+https://en.wikipedia.org/wiki/Recommender_system+
+\item \verb+http://www.cs.washington.edu/education/courses/csep521/07wi/prj/michael.pdf+
+\item \verb+https://recommender-systems.org+
+\end{itemize}
+\subsection*{Tasks}
+\begin{itemize}
+\item Scrape web data -- Peter, Oren.
+\item Parse data into vectors consisting of users, beers, beer attributes, and like/dislike -- Sayer, Peter.
+\item Implement ML algorithm -- Oren, Sayer.
+\item Test -- everybody.
+\end{itemize}
+\subsection*{Schedule}
+\begin{itemize}
+\item Obtaining data -- Tuesday 4/16.
+\item Parsing data -- Tuesday 4/23.
+\item ML algorithm -- Friday 4/26.
+\item Testing -- Tuesday (Thursday?) 4/30.
+\end{itemize}
+\end{document}
