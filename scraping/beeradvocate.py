@@ -62,7 +62,7 @@ def get_review_attributes(review):
     review_strings = [s for s in review.strings] # turn the generator into a list
     final = {}
     final['score'] = float(review.span.string)
-    final['user'] = review.h6.a.string
+    final['author'] = review.h6.a.string
     particulars = filter(lambda x: x.startswith('look'), review_strings)[0]
     review_strings.remove(particulars)
     particulars = particulars.split('|')
@@ -93,9 +93,21 @@ def get_review_attributes(review):
 
 if __name__ == '__main__':
     import pprint
+    import sqlite3
+    connection = sqlite3.connect('./db_file')
+    cursor = connection.cursor()
     url = START_URL
-    for i in range(2):
+    while url is not None:
         soup = bs4.BeautifulSoup(urllib2.urlopen(url).read())
         for link in get_beer_urls(soup):
-            pprint.pprint(get_beer_page(link))
+            for review in get_beer_page(link):
+                cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                               review['author'],
+                               review['score'],
+                               review['text'],
+                               review['particulars']['look'],
+                               review['particulars']['smell'],
+                               review['particulars']['taste'],
+                               review['particulars']['feel'],
+                               review['particulars']['overall'])
         url = get_next_page(soup)
