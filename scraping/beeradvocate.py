@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 '''
 Scraper for BeerAdvocate. This is real quick and hacky, all the way
 through. Wooooo.
@@ -52,7 +54,13 @@ def get_beer_page(url):
     html = urllib2.urlopen(strip_url_params(url)).read()
     parsed = bs4.BeautifulSoup(html)
     reviews = filter(lambda x: x['id'] == REVIEW_ID if 'id' in x.attrs.keys() else False, parsed.find_all('div'))
-    return [get_review_attributes(review) for review in reviews]
+    ret = []
+    for review in reviews:
+        try:
+            ret.append(get_review_attributes(review))
+        except Exception:
+            pass
+    return ret
 
 def get_review_attributes(review):
     '''
@@ -97,17 +105,26 @@ if __name__ == '__main__':
     connection = sqlite3.connect('./db_file')
     cursor = connection.cursor()
     url = START_URL
+    count = 0
     while url is not None:
         soup = bs4.BeautifulSoup(urllib2.urlopen(url).read())
         for link in get_beer_urls(soup):
             for review in get_beer_page(link):
-                cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                               review['author'],
-                               review['score'],
-                               review['text'],
-                               review['particulars']['look'],
-                               review['particulars']['smell'],
-                               review['particulars']['taste'],
-                               review['particulars']['feel'],
-                               review['particulars']['overall'])
+                print('On review number: %d' % count)
+                count += 1
+                try:
+                    cursor.execute('INSERT INTO reviews VALUES (?, ?, ?)',
+                                   (review['author'],
+                                    review['score'],
+                                    review['review']))
+                                   # review['particulars']['look'],
+                                   # review['particulars']['smell'],
+                                   # review['particulars']['taste'],
+                                   # review['particulars']['feel'],
+                                   # review['particulars']['overall'])
+                    connection.commit()
+                except Exception as e:
+                    print('bad! %s' % e)
+                    pprint.pprint(review)
         url = get_next_page(soup)
+    connection.close()
