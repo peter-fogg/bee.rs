@@ -54,21 +54,22 @@ def get_beer_page(url):
     html = urllib2.urlopen(strip_url_params(url)).read()
     parsed = bs4.BeautifulSoup(html)
     reviews = filter(lambda x: x['id'] == REVIEW_ID if 'id' in x.attrs.keys() else False, parsed.find_all('div'))
+    beername = parsed.find('h1').text
     ret = []
     for review in reviews:
         try:
-            ret.append(get_review_attributes(review))
+            ret.append(get_review_attributes(review, beername))
         except Exception:
             pass
     return ret
 
-def get_review_attributes(review):
+def get_review_attributes(review, beer):
     '''
     Given the soup for a review, returns all the important attributes
     of said review -- overall rating, review text, etc.
     '''
     review_strings = [s for s in review.strings] # turn the generator into a list
-    final = {}
+    final = {'beer': beer}
     final['score'] = float(review.span.string)
     final['author'] = review.h6.a.string
     particulars = filter(lambda x: x.startswith('look'), review_strings)[0]
@@ -113,8 +114,9 @@ if __name__ == '__main__':
                 print('On review number: %d' % count)
                 count += 1
                 try:
-                    cursor.execute('INSERT INTO reviews VALUES (?, ?, ?)',
-                                   (review['author'],
+                    cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?)',
+                                   (review['beer'],
+                                    review['author'],
                                     review['score'],
                                     review['review']))
                                    # review['particulars']['look'],
@@ -122,9 +124,9 @@ if __name__ == '__main__':
                                    # review['particulars']['taste'],
                                    # review['particulars']['feel'],
                                    # review['particulars']['overall'])
-                    connection.commit()
                 except Exception as e:
                     print('bad! %s' % e)
                     pprint.pprint(review)
+            connection.commit()
         url = get_next_page(soup)
     connection.close()
