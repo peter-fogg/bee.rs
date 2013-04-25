@@ -55,8 +55,11 @@ def get_beer_page(url):
     parsed = bs4.BeautifulSoup(html)
     reviews = filter(lambda x: x['id'] == REVIEW_ID if 'id' in x.attrs.keys() else False, parsed.find_all('div'))
     beername, brewery = parsed.find('h1').text.split('-')[0:2]
-    abv = re.search('.*([0-9]+\\.[0-9]+)% ABV.*', parsed.find_all('td', limit=2)[1].text).groups()[0]
-    print('abv: %s' % abv)
+    abv = 5.0 # gross gross nasty bad
+    try:
+        abv = re.search('.*([0-9]+\\.[0-9]+)% ABV.*', parsed.find_all('td', limit=2)[1].text).groups()[0]
+    except Exception:
+        pass
     ret = []
     for review in reviews:
         try:
@@ -120,11 +123,12 @@ if __name__ == '__main__':
                 print('On review number: %d' % count)
                 count += 1
                 try:
-                    cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?)',
+                    cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?, ?, ?)',
                                    (review['beer'],
                                     review['brewery'],
                                     review['author'],
                                     review['score'],
+                                    review['abv'],
                                     review['review']))
                                    # review['particulars']['look'],
                                    # review['particulars']['smell'],
@@ -134,7 +138,6 @@ if __name__ == '__main__':
                 except Exception as e:
                     print('bad! %s' % e)
                     pprint.pprint(review)
-                pprint.pprint(review)
             connection.commit()
         url = get_next_page(soup)
     connection.close()

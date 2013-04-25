@@ -20,6 +20,6 @@ connection = sqlite3.connect('./db_file')
 
 cursor = connection.cursor()
 
-cursor.execute('CREATE TABLE reviews (beername text, brewery text, author text, score real, review text)')
+cursor.execute('CREATE TABLE reviews (beername text, brewery text, author text, score real, abv float, review text)')
 #, look float, smell float, taste float, feel float, overall float)')
 connection.commit()
