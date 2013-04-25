@@ -54,22 +54,28 @@ def get_beer_page(url):
     html = urllib2.urlopen(strip_url_params(url)).read()
     parsed = bs4.BeautifulSoup(html)
     reviews = filter(lambda x: x['id'] == REVIEW_ID if 'id' in x.attrs.keys() else False, parsed.find_all('div'))
-    beername = parsed.find('h1').text
+    beername, brewery = parsed.find('h1').text.split('-')[0:2]
+    abv = re.search('.*([0-9]+\\.[0-9]+)% ABV.*', parsed.find_all('td', limit=2)[1].text).groups()[0]
+    print('abv: %s' % abv)
     ret = []
     for review in reviews:
         try:
-            ret.append(get_review_attributes(review, beername))
+            d = get_review_attributes(review)
+            d.update({'beer': beername,
+                      'brewery': brewery,
+                      'abv': float(abv)})
+            ret.append(d)
         except Exception:
             pass
     return ret
 
-def get_review_attributes(review, beer):
+def get_review_attributes(review):
     '''
     Given the soup for a review, returns all the important attributes
     of said review -- overall rating, review text, etc.
     '''
     review_strings = [s for s in review.strings] # turn the generator into a list
-    final = {'beer': beer}
+    final = {}
     final['score'] = float(review.span.string)
     final['author'] = review.h6.a.string
     particulars = filter(lambda x: x.startswith('look'), review_strings)[0]
@@ -116,6 +122,7 @@ if __name__ == '__main__':
                 try:
                     cursor.execute('INSERT INTO reviews VALUES (?, ?, ?, ?)',
                                    (review['beer'],
+                                    review['brewery'],
                                     review['author'],
                                     review['score'],
                                     review['review']))
@@ -127,6 +134,7 @@ if __name__ == '__main__':
                 except Exception as e:
                     print('bad! %s' % e)
                     pprint.pprint(review)
+                pprint.pprint(review)
             connection.commit()
         url = get_next_page(soup)
     connection.close()
