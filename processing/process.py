@@ -3,7 +3,7 @@
 import collections
 import sqlite3
 
-DB_FILENAME = './fivethoudb.sql'
+DB_FILENAME = './full-db.sql'
 
 connection = sqlite3.connect(DB_FILENAME)
 
