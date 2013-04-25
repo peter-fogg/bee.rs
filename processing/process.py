@@ -16,11 +16,12 @@ item = cursor.fetchone()
 counter = collections.Counter()
 
 i = 0
+print('Starting...')
 while item is not None:
     i += 1
     if i % 100000 == 0:
         print('At number: %s' % i)
-    text = map(lambda s: s.lower().strip('.;,:!"?\'(){}[]'), item[3].split())
+    text = map(lambda s: s.lower().strip('.;,:!"?\'(){}[]'), item[5].split())
     for word in text:
         counter[word] += 1
     item = cursor.fetchone()
