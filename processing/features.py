@@ -104,8 +104,10 @@ while item is not None:
     (beername, _, _, score, abv, review) = item
     if beername not in beers:
         beers[beername] = {attribute: 0 for attribute in attributes}
+        beers[beername]['score'] = 0
         # beers[beername]['a_b_v'] = float(abv)
     beers[beername]['num_reviews'] += 1
+    beers[beername]['score'] += score
     for attribute in attributes:
         if attribute in review:
             beers[beername][attribute] += 1
@@ -117,18 +119,17 @@ for beername in beers:
     normalized_beers[beername] = {attribute: float(beers[beername][attribute])/beers[beername]['num_reviews']
                                   for attribute in beers[beername]}
     del normalized_beers[beername]['num_reviews']
-    
-# pprint.pprint(normalized_beers)
+    normalized_beers[beername]['score'] /= 5.0
 
 attributes.pop()
 
 connection = sqlite3.connect('beers-db.sql')
 cursor = connection.cursor()
-cursor.execute('CREATE TABLE beers (beername text, %s real)' % ' real, '.join(attributes))
+cursor.execute('CREATE TABLE beers (beername text, %s real)' % ' real, '.join(attributes + ['score']))
 connection.commit()
 for beer in normalized_beers:
-    cursor.execute('INSERT INTO beers VALUES (%s)' % ', '.join(['?'] * (len(attributes) + 1)),
-                   tuple([beer] + [normalized_beers[beer][attribute] for attribute in attributes]))
+    cursor.execute('INSERT INTO beers VALUES (%s)' % ', '.join(['?'] * (len(attributes) + 2)),
+                   tuple([beer] + [normalized_beers[beer][attribute] for attribute in attributes + ['score']]))
     connection.commit()
 
 connection.close()
