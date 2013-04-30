@@ -232,9 +232,7 @@ def main():
 
     search_attributes = important_attributes(beers[input_beer])
     print('\nSearching for beers with attributes like:'),
-    for att in search_attributes:
-        print(att[0] + ', '),
-    print('')
+    print(', '.join(map(lambda x: x[0], search_attributes)))
     
     nearest_beers = nearest_neighbors(k, beers[input_beer], beers)
     print '\nYou might like:'
