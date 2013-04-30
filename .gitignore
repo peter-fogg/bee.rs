@@ -2,3 +2,4 @@
 *.swp
 scraping/*db_file
 *.sql
+*~
