@@ -108,7 +108,8 @@ def main():
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
     nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
-    pprint.pprint(nearest_beers)
+    for beer in nearest_beers:
+        print(beer[0])
 
 if __name__ == '__main__':
     main()
