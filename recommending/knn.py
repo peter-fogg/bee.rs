@@ -1,24 +1,6 @@
 import sqlite3
 import pprint
 
-def similar_beernames(beer, comparison_func=edit_distance):
-    '''
-    Returns beers with a name similar to the input beer -- for
-    example, the database contains "90 Minute IPA", but not "90
-    Minute". So if the user searches for a beer that's not there, we
-    can print a list of better choices to search for.
-    '''
-    connection = sqlite3.connect('../processing/beers-db.sql')
-    cursor = connection.cursor()
-    similars = []
-    cursor.execute('select * from beers')
-    item = cursor.fetchone()
-    while item is not None:
-        if comparison_func(beer, item[0].strip()) > 10 or beer in item[0]:
-            similars.append(item[0])
-        item = cursor.fetchone()
-    return similars
-
 def edit_distance(s1, s2):
     """
     Returns the Levenshtein distance between the two strings. For use
@@ -53,6 +35,21 @@ def longest_common_subsequence(s1, s2):
             else:
                 table[i][j] = max(table[i - 1][j], table[i][j - 1])
     return table[len(s1) - 1][len(s2) - 1]
+
+def similar_beernames(beer, beers):
+    '''
+    Returns a set of beers with a name similar to the input beer --
+    for example, the database contains "90 Minute IPA", but not "90
+    Minute". So if the user searches for a beer that's not there, we
+    can print a list of better choices to search for.
+    '''
+    similars = set()
+    for b in beers:
+        if edit_distance(beer, b.strip()) < 5 or beer in b:
+            similars.add(b)
+        if longest_common_subsequence(beer, b.strip()) > 10:
+            similars.add(b)
+    return similars
 
 def manhattan_distance(x1,x2):
 	if len(x1) != len(x2):
@@ -92,8 +89,22 @@ connection.close()
 
 input_beer = raw_input('Please enter the name of a beer that you like: ')
 
+if input_beer not in beers:
+	possibilities = similar_beernames(input_beer, beers)
+	while not possibilities:
+		input_beer = raw_input('We could not recognize this beer. Please enter another: ')
+		possibilities = similar_beernames(input_beer, beers)
+	for possibility in possibilities:
+		feedback = raw_input(u'Did you mean ' + possibility + u'? ')
+		if 'y' in feedback:
+			input_beer = possibility
+			break
+	if input_beer not in beers:
+		print 'We could not find the beer you were looking for. Please try again.'
+		quit()
+
 k = int(raw_input('How many similar beers would you like to see?: '))
 
-nearest_beers = nearest_neighbors(k, input_beer, beers)	
+nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
 
 pprint.pprint(nearest_beers)
