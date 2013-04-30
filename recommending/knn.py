@@ -1,5 +1,6 @@
 import sqlite3
 import pprint
+import sys
 
 def edit_distance(s1, s2):
     """
@@ -68,7 +69,7 @@ def nearest_neighbors(k, query, dataset):
             neighbors.append((example, manhattan_distance(vector, query)))
         else:
             dist = manhattan_distance(vector, query)
-            if dist < neighbors[k-1][1]:
+            if dist < neighbors[k-1][1] and dist != 0:
                 neighbors[k-1] = (example, dist)
                 neighbors.sort(key=lambda x: x[1])
     return neighbors
@@ -96,7 +97,7 @@ def main():
             input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
             possibilities = similar_beernames(input_beer, beers)
         for possibility in possibilities:
-            feedback = raw_input(u'Did you mean ' + possibility + u'? ')
+            feedback = raw_input(u'Did you mean ' + possibility.encode(sys.stdout.encoding) + u'? ')
             if u'y' in feedback:
                 input_beer = possibility
                 break
@@ -107,7 +108,6 @@ def main():
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
     nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
-
     pprint.pprint(nearest_beers)
 
 if __name__ == '__main__':
