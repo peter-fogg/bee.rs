@@ -2,6 +2,94 @@ import sqlite3
 import pprint
 import sys
 
+attributes = ['spices',
+              'bite',
+              'cocao',
+              'lighter',
+              'soft',
+              'pineapple',
+              'molasses',
+              'burnt',
+              'grain',
+              'cloudy',
+              'roast',
+              'wine',
+              'banana',
+              'apple',
+              'cherry',
+              'foamy',
+              'bright',
+              'booze',
+              'piney',
+              'herbal',
+              'toasted',
+              'rye',
+              'grassy',
+              'copper',
+              'tropical',
+              'subtle',
+              'honey',
+              'toffee',
+              'bread',
+              'red',
+              'sticky',
+              'tart',
+              'refreshing',
+              'complex',
+              'spice',
+              'belgian',
+              'spicy',
+              'fruits',
+              'bready',
+              'sugar',
+              'wheat',
+              'clean',
+              'deep',
+              'tan',
+              'rich',
+              'sour',
+              'oak',
+              'leaves',
+              'fresh',
+              'hoppy',
+              'malty',
+              'lemon',
+              'hazy',
+              'fruity',
+              'crisp',
+              'bourbon',
+              'full',
+              'mild',
+              'pale',
+              'golden',
+              'floral',
+              'balanced',
+              'amber',
+              'vanilla',
+              'yeast',
+              'grapefruit',
+              'thick',
+              'creamy',
+              'roasted',
+              'pine',
+              'black',
+              'fruit',
+              'orange',
+              'smooth',
+              'brown',
+              'bitter',
+              'coffee',
+              'caramel',
+              'chocolate',
+              'citrus',
+              'hop',
+              'dark',
+              'sweet',
+              'malt',
+              'light',
+              # 'a_b_v',
+              'num_reviews']
+
 def edit_distance(s1, s2):
     """
     Returns the Levenshtein distance between the two strings. For use
@@ -74,12 +162,25 @@ def nearest_neighbors(k, query, dataset):
         vector = dataset[example]
         if len(neighbors) < k:
             neighbors.append((example, manhattan_distance(vector, query)))
+            neighbors.sort(key=lambda x: x[1])
         else:
             dist = manhattan_distance(vector, query)
             if dist < neighbors[k-1][1] and dist != 0:
                 neighbors[k-1] = (example, dist)
                 neighbors.sort(key=lambda x: x[1])
     return neighbors
+
+def important_attributes(vector):
+    atts = []
+    for i in xrange(len(vector)):
+        if len(atts) < 3:
+            atts.append((attributes[i], vector[i]))
+            atts.sort(key=lambda x: x[1])
+        else:
+            if vector[i] > atts[2][1]:
+                atts[2] = (attributes[i], vector[i])
+                atts.sort(key=lambda x: x[1])
+    return atts
 
 def main():
     # Grab the beer names and attribute vectors from the database.
@@ -119,6 +220,12 @@ def main():
     # Ask the user for k. 
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
+    search_attributes = important_attributes(beers[input_beer])
+    print('\nSearching for beers that have the attributes:'),
+    for att in search_attributes:
+        print(att[0] + ', '),
+    print('')
+    
     nearest_beers = nearest_neighbors(k, beers[input_beer], beers)
     print '\nYou might like:'
     rank = 1
