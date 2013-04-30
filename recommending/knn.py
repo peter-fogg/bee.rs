@@ -107,7 +107,8 @@ def main():
             input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
             possibilities = similar_beernames(input_beer, beers)
         for possibility in possibilities:
-            feedback = raw_input(u'Did you mean ' + possibility.encode(sys.stdout.encoding) + u'? (y/n) ')
+            print(u'Did you mean ' + possibility + u'? (y/n) '),
+            feedback = raw_input('')
             if u'y' in feedback:
                 input_beer = possibility
                 break
