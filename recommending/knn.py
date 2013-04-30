@@ -46,9 +46,9 @@ def similar_beernames(beer, beers):
     '''
     similars = set()
     for b in beers:
-        if edit_distance(beer, b.strip()) < 5 or beer in b:
+        if edit_distance(beer, b.strip()) < 3 or beer in b:
             similars.add(b)
-        if longest_common_subsequence(beer, b.strip()) > 10:
+        if longest_common_subsequence(beer, b.strip()) > .75*len(beer):
             similars.add(b)
     return similars
 
@@ -62,50 +62,53 @@ def manhattan_distance(x1,x2):
 
 
 def nearest_neighbors(k, query, dataset):
-	neighbors = []
-	for example in dataset:
-		vector = dataset[example]
-		if len(neighbors) < k:
-			neighbors.append((example, manhattan_distance(vector, query)))
-		else:
-			dist = manhattan_distance(vector, query)
-			if dist < manhattan_distance(neighbors[k-1], query):
-				neighbors[k-1] = (example, dist)
-				neighbors.sort()
-	return neighbors
+    neighbors = []
+    for example in dataset:
+        vector = dataset[example]
+        if len(neighbors) < k:
+            neighbors.append((example, manhattan_distance(vector, query)))
+        else:
+            dist = manhattan_distance(vector, query)
+            if dist < neighbors[k-1][1] and dist != 0:
+                neighbors[k-1] = (example, dist)
+                neighbors.sort(key=lambda x: x[1])
+    return neighbors
 
-connection = sqlite3.connect('beers-db.sql')
-cursor = connection.cursor()
-cursor.execute('select * from beers')
+def main():
+    connection = sqlite3.connect('beers-db.sql')
+    cursor = connection.cursor()
+    cursor.execute('select * from beers')
+    
+    beers = {}
+    
+    item = cursor.fetchone()
+    while item is not None:
+	beername = unicode(item[0].strip())
+        beers[beername] = item[1:]
+        item = cursor.fetchone()
+        
+    connection.close()
 
-beers = {}
+    input_beer = raw_input(u'Please enter the name of a beer that you like: ')
 
-item = cursor.fetchone()
-while item is not None:
-	beername = unicode(item[0])
-	beers[beername] = item[1:]
-	item = cursor.fetchone()
+    if input_beer not in beers:
+        possibilities = similar_beernames(input_beer, beers)
+        while not possibilities:
+            input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
+            possibilities = similar_beernames(input_beer, beers)
+        for possibility in possibilities:
+            feedback = raw_input(u'Did you mean ' + possibility.encode(sys.stdout.encoding) + u'? (y/n)')
+            if u'y' in feedback:
+                input_beer = possibility
+                break
+        if input_beer not in beers:
+            print(u'We could not find the beer you were looking for. Please try again.')
+            quit()
 
-connection.close()
+    k = int(raw_input(u'How many similar beers would you like to see?: '))
 
-input_beer = raw_input('Please enter the name of a beer that you like: ')
+    nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
+    pprint.pprint(nearest_beers)
 
-if input_beer not in beers:
-	possibilities = similar_beernames(input_beer, beers)
-	while not possibilities:
-		input_beer = raw_input('We could not recognize this beer. Please enter another: ')
-		possibilities = similar_beernames(input_beer, beers)
-	for possibility in possibilities:
-		feedback = raw_input('Did you mean ' + possibility.encode(sys.stdout.encoding) + '? (y/n)')
-		if 'y' in feedback:
-			input_beer = possibility
-			break
-	if input_beer not in beers:
-		print 'We could not find the beer you were looking for. Please try again.'
-		quit()
-
-k = int(raw_input('How many similar beers would you like to see?: '))
-
-nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
-
-pprint.pprint(nearest_beers)
+if __name__ == '__main__':
+    main()
