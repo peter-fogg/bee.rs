@@ -119,9 +119,12 @@ def main():
     # Ask the user for k. 
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
-    nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
+    nearest_beers = nearest_neighbors(k, beers[input_beer], beers)
+    print '\nYou might like:'
+    rank = 1
     for beer in nearest_beers:
-        print(beer[0])
+        print(str(rank) + '. ' + beer[0])
+        rank += 1
 
 if __name__ == '__main__':
     main()
