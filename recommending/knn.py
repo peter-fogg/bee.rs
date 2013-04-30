@@ -96,7 +96,7 @@ if input_beer not in beers:
 		input_beer = raw_input('We could not recognize this beer. Please enter another: ')
 		possibilities = similar_beernames(input_beer, beers)
 	for possibility in possibilities:
-		feedback = raw_input('Did you mean ' + possibility.encode(sys.stdout.encoding) + '? ')
+		feedback = raw_input('Did you mean ' + possibility.encode(sys.stdout.encoding) + '? (y/n)')
 		if 'y' in feedback:
 			input_beer = possibility
 			break
