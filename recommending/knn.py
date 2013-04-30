@@ -124,6 +124,13 @@ def longest_common_subsequence(s1, s2):
                 table[i][j] = max(table[i - 1][j], table[i][j - 1])
     return table[len(s1) - 1][len(s2) - 1]
 
+def distance_heuristic(edit, lcs):
+    '''
+    A heuristic to determine how close beernames are based on LCS
+    and Levenshtein distance.
+    '''
+    return lcs + (3.0/edit)
+
 def similar_beernames(beer, beers):
     '''
     Returns a set of beers with a name similar to the input beer --
@@ -134,11 +141,13 @@ def similar_beernames(beer, beers):
     beer = beer.strip().lower()
     similars = set()
     for b in beers:
-        if edit_distance(beer, b.strip().lower()) < 3 or beer in b:
-            similars.add(b)
-        if longest_common_subsequence(beer, b.strip().lower()) > .75*len(beer):
-            similars.add(b)
-    return similars
+        lcs = longest_common_subsequence(beer, b.strip().lower())
+        dist = edit_distance(beer, b.strip().lower())
+        if dist < 3 or lcs > .75*len(beer):
+            similars.add((b, distance_heuristic(dist, lcs)))
+        if beer in b.strip().lower():
+            similars.add((b, 0))
+    return map(lambda x: x[0], sorted(list(similars), key=lambda x: x[1]))
 
 def manhattan_distance(x1,x2):
     '''
@@ -150,7 +159,6 @@ def manhattan_distance(x1,x2):
     for i in xrange(len(x1)):
 	distance += abs(x1[i] - x2[i])
     return distance
-
 
 def nearest_neighbors(k, query, dataset):
     '''
@@ -209,8 +217,8 @@ def main():
         while not possibilities:
             input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
             possibilities = similar_beernames(input_beer, beers)
-        for possibility in possibilities:
-            print(u'Did you mean ' + possibility + u'? (y/n) '),
+        for i, possibility in enumerate(possibilities):
+            print(u'%d. Did you mean %s? (y/n) ' % (i, possibility)),
             feedback = raw_input('')
             if u'y' in feedback:
                 input_beer = possibility
