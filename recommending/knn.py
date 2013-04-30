@@ -83,7 +83,7 @@ def nearest_neighbors(k, query, dataset):
 
 def main():
     # Grab the beer names and attribute vectors from the database.
-    connection = sqlite3.connect('beers-db.sql')
+    connection = sqlite3.connect('../processing/beers-db.sql')
     cursor = connection.cursor()
     cursor.execute('select * from beers')
     
