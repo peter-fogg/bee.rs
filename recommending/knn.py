@@ -1,5 +1,6 @@
 import sqlite3
 import pprint
+import sys
 
 def edit_distance(s1, s2):
     """
@@ -81,7 +82,7 @@ beers = {}
 
 item = cursor.fetchone()
 while item is not None:
-	beername = item[0]
+	beername = unicode(item[0])
 	beers[beername] = item[1:]
 	item = cursor.fetchone()
 
@@ -95,7 +96,7 @@ if input_beer not in beers:
 		input_beer = raw_input('We could not recognize this beer. Please enter another: ')
 		possibilities = similar_beernames(input_beer, beers)
 	for possibility in possibilities:
-		feedback = raw_input(u'Did you mean ' + possibility + u'? ')
+		feedback = raw_input('Did you mean ' + possibility.encode(sys.stdout.encoding) + '? ')
 		if 'y' in feedback:
 			input_beer = possibility
 			break
