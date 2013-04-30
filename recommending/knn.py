@@ -87,8 +87,7 @@ attributes = ['spices',
               'sweet',
               'malt',
               'light',
-              # 'a_b_v',
-              'num_reviews']
+              'score']
 
 def edit_distance(s1, s2):
     """
@@ -176,11 +175,13 @@ def important_attributes(vector):
     for i in xrange(len(vector)):
         if len(atts) < 3:
             atts.append((attributes[i], vector[i]))
-            atts.sort(key=lambda x: x[1])
+            atts.sort(key=lambda x: x[1], reverse = True)
         else:
             if vector[i] > atts[2][1]:
+                if attributes[i] == 'score':
+                    continue
                 atts[2] = (attributes[i], vector[i])
-                atts.sort(key=lambda x: x[1])
+                atts.sort(key=lambda x: x[1], reverse = True)
     return atts
 
 def main():
@@ -222,7 +223,7 @@ def main():
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
     search_attributes = important_attributes(beers[input_beer])
-    print('\nSearching for beers that have the attributes:'),
+    print('\nSearching for beers with attributes like:'),
     for att in search_attributes:
         print(att[0] + ', '),
     print('')
