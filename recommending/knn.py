@@ -53,15 +53,15 @@ def similar_beernames(beer, beers):
     return similars
 
 def manhattan_distance(x1,x2):
-	'''
-	Returns the Manhattan distance between a pair of attribute vectors.
-	'''
-	if len(x1) != len(x2):
-		return -1
-	distance = 0
-	for i in xrange(len(x1)):
-		distance += abs(x1[i] - x2[i])
-	return distance
+    '''
+    Returns the Manhattan distance between a pair of attribute vectors.
+    '''
+    if len(x1) != len(x2):
+    	return -1
+    distance = 0
+    for i in xrange(len(x1)):
+	distance += abs(x1[i] - x2[i])
+    return distance
 
 
 def nearest_neighbors(k, query, dataset):
