@@ -213,6 +213,7 @@ def main():
 
     # If the input beer isn't in our database, give the user some similar beer names.
     if input_beer not in beers:
+        print("That's not a beer I know. Lemme check for similar ones...")
         possibilities = similar_beernames(input_beer, beers)
         while not possibilities:
             input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
