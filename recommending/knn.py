@@ -53,6 +53,9 @@ def similar_beernames(beer, beers):
     return similars
 
 def manhattan_distance(x1,x2):
+	'''
+	Returns the Manhattan distance between a pair of attribute vectors.
+	'''
 	if len(x1) != len(x2):
 		return -1
 	distance = 0
@@ -62,6 +65,10 @@ def manhattan_distance(x1,x2):
 
 
 def nearest_neighbors(k, query, dataset):
+    '''
+    Returns a list of the k most similar beers to the input beer in terms
+    of Manhattan distance.
+    '''
     neighbors = []
     for example in dataset:
         vector = dataset[example]
@@ -75,6 +82,7 @@ def nearest_neighbors(k, query, dataset):
     return neighbors
 
 def main():
+    # Grab the beer names and attribute vectors from the database.
     connection = sqlite3.connect('beers-db.sql')
     cursor = connection.cursor()
     cursor.execute('select * from beers')
@@ -89,8 +97,10 @@ def main():
         
     connection.close()
 
+    # Ask the user for an input beer.
     input_beer = raw_input(u'Please enter the name of a beer that you like: ')
 
+    # If the input beer isn't in our database, give the user some similar beer names.
     if input_beer not in beers:
         possibilities = similar_beernames(input_beer, beers)
         while not possibilities:
@@ -105,6 +115,7 @@ def main():
             print(u'We could not find the beer you were looking for. Please try again.')
             quit()
 
+    # Ask the user for k. 
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
     nearest_beers = nearest_neighbors(k, beers[input_beer], beers)	
