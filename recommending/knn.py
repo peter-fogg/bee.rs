@@ -44,11 +44,12 @@ def similar_beernames(beer, beers):
     Minute". So if the user searches for a beer that's not there, we
     can print a list of better choices to search for.
     '''
+    beer = beer.strip().lower()
     similars = set()
     for b in beers:
-        if edit_distance(beer, b.strip()) < 3 or beer in b:
+        if edit_distance(beer, b.strip().lower()) < 3 or beer in b:
             similars.add(b)
-        if longest_common_subsequence(beer, b.strip()) > .75*len(beer):
+        if longest_common_subsequence(beer, b.strip().lower()) > .75*len(beer):
             similars.add(b)
     return similars
 
