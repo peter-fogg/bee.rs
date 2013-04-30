@@ -42,21 +42,23 @@ def edit_distance(s1, s2):
             table[i][j] = min(table[i - 1][j], table[i][j - 1], table[i - 1][j - 1]) + (1 if s1[i] != s2[j] else 0)
     return table[len(s1) - 1][len(s2) - 1]
 
-def similar_beernames(beer, comparison_func=edit_distance):
+def similar_beernames(beer):
     '''
-    Returns beers with a name similar to the input beer -- for
-    example, the database contains "90 Minute IPA", but not "90
+    Returns a set of beers with a name similar to the input beer --
+    for example, the database contains "90 Minute IPA", but not "90
     Minute". So if the user searches for a beer that's not there, we
     can print a list of better choices to search for.
     '''
     connection = sqlite3.connect('../processing/beers-db.sql')
     cursor = connection.cursor()
-    similars = []
     cursor.execute('select * from beers')
     item = cursor.fetchone()
+    similars = set()
     while item is not None:
-        if comparison_func(beer, item[0].strip()) > 10 or beer in item[0]:
-            similars.append(item[0])
+        if edit_distance(beer, item[0].strip()) < 5 or beer in item[0]:
+            similars.add(item[0])
+        if longest_common_subsequence(beer, item[0].strip()) > 10:
+            similars.add(item[0])
         item = cursor.fetchone()
     return similars
 
