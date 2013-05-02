@@ -151,14 +151,24 @@ def similar_beernames(beer, beers):
 
 def manhattan_distance(x1,x2):
     '''
-    Returns the Manhattan distance between a pair of attribute vectors.
+    Returns a tuple of the Manhattan distance between a pair of attribute vectors
+    and a tuple of the three attributes on which the two vectors are the most similar.
     '''
+    relevant_attributes = []
     if len(x1) != len(x2):
     	return -1
     distance = 0
     for i in xrange(len(x1)):
 	distance += abs(x1[i] - x2[i])
-    return distance
+        if x1[i] != 0 or x2[i] != 0:
+            if len(relevant_attributes) < 3:
+                relevant_attributes.append((i, abs(x1[i] - x2[i])))
+                relevant_attributes.sort(key=lambda x: x[1])
+            else:
+                if abs(x1[i] - x2[i]) < relevant_attributes[2][1]:
+                    relevant_attributes[2] = (i, abs(x1[i] - x2[i]))
+                    relevant_attributes.sort(key=lambda x: x[1])
+    return (distance, tuple(relevant_attributes))
 
 def nearest_neighbors(k, query, dataset):
     '''
@@ -168,13 +178,13 @@ def nearest_neighbors(k, query, dataset):
     neighbors = []
     for example in dataset:
         vector = dataset[example]
+        dist, relevant_attributes = manhattan_distance(vector, query)
         if len(neighbors) < k:
-            neighbors.append((example, manhattan_distance(vector, query)))
+            neighbors.append((example, dist, relevant_attributes))
             neighbors.sort(key=lambda x: x[1])
         else:
-            dist = manhattan_distance(vector, query)
             if dist < neighbors[k-1][1] and dist != 0:
-                neighbors[k-1] = (example, dist)
+                neighbors[k-1] = (example, dist, relevant_attributes)
                 neighbors.sort(key=lambda x: x[1])
     return neighbors
 
@@ -239,7 +249,7 @@ def main():
     print '\nYou might like:'
     rank = 1
     for beer in nearest_beers:
-        print(str(rank) + '. ' + beer[0])
+        print(str(rank) + '. ' + beer[0] + ' (matched on: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
         rank += 1
 
 if __name__ == '__main__':
