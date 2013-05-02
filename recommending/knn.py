@@ -249,7 +249,7 @@ def main():
     print '\nYou might like:'
     rank = 1
     for beer in nearest_beers:
-        print(str(rank) + '. ' + beer[0] + ' (matched on: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
+        print(str(rank) + '. ' + beer[0] + ' (similar attributes: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
         rank += 1
 
 if __name__ == '__main__':
