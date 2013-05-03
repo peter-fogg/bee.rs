@@ -130,7 +130,7 @@ def distance_heuristic(edit, lcs):
     A heuristic to determine how close beernames are based on LCS
     and Levenshtein distance.
     '''
-    return lcs + (3.0/edit)
+    return lcs + ((3.0/edit) if edit else 0)
 
 def similar_beernames(beer, beers):
     '''
