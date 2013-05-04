@@ -3,3 +3,5 @@
 scraping/*db_file
 *.sql
 *~
+*.aux
+*.log
