@@ -55,7 +55,9 @@ The system is broken up into three parts -- data collection, data processing, an
   Beer names are somewhat inconsistently formatted in our database, and the user might not remember the precise name of the beer they want. For example, the user might search for ``Torpedo'', but the database contains ``Sierra Nevada Torpedo Extra IPA''. In order to compensate for this, we implemented a fuzzy string matching heuristic to suggest similarly-named beers. If the input is a substring of a beer name, this distance heuristic is 0. Otherwise, it is the length of the longest common subsequence plus 3 over the Levenshtein distance of the two strings. We return a sorted list of beernames with a sufficiently small distance, and present these to the user as options. The heuristic is somewhat arbitrary, but it usually suggests the desired beer as the first result.
 \end{itemize}
 \subsection*{Evaluation}
+Given that beer preferences are an entirely subjective matter, we used a qualitative approach to our testing. When prompted with a beer that the user likes, the system should respond with similar beers. Better yet, the results should contain other beers that the user likes -- this is a good indication that the system is capable of determining the user's preferences.
 
+Our results are promising. The system always returns beers of a similar style and quality, and often gives beers that the testers are known to enjoy.
 \subsection*{Related Work}
 
 \subsection*{Future Work}
