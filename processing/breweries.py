@@ -105,7 +105,7 @@ while item is not None:
         beers[beername] = {attribute: 0 for attribute in attributes}
         beers[beername]['score'] = 0
         beers[beername]['brewery'] = brewery
-        beers[beername]['a_b_v'] = float(abv)
+        beers[beername]['a_b_v'] = float(abv)/20.0
     beers[beername]['num_reviews'] += 1
     beers[beername]['score'] += score
     for attribute in attributes:
