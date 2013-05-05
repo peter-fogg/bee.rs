@@ -87,6 +87,7 @@ attributes = ['spices',
               'sweet',
               'malt',
               'light',
+              'a_b_v',
               'score']
 
 def edit_distance(s1, s2):
@@ -129,7 +130,7 @@ def distance_heuristic(edit, lcs):
     A heuristic to determine how close beernames are based on LCS
     and Levenshtein distance.
     '''
-    return lcs + (3.0/edit)
+    return lcs + ((3.0/edit) if edit else 0)
 
 def similar_beernames(beer, beers):
     '''
@@ -177,7 +178,7 @@ def nearest_neighbors(k, query, dataset):
     '''
     neighbors = []
     for example in dataset:
-        vector = dataset[example]
+        vector = dataset[example]['attributes']
         dist, relevant_attributes = manhattan_distance(vector, query)
         if len(neighbors) < k:
             neighbors.append((example, dist, relevant_attributes))
@@ -189,6 +190,10 @@ def nearest_neighbors(k, query, dataset):
     return neighbors
 
 def important_attributes(vector):
+    """
+    Given a vector representing a beer's attributes, returns a list
+    of the most relevant ones.
+    """
     atts = []
     for i in xrange(len(vector)):
         if len(atts) < 3:
@@ -196,7 +201,7 @@ def important_attributes(vector):
             atts.sort(key=lambda x: x[1], reverse = True)
         else:
             if vector[i] > atts[2][1]:
-                if attributes[i] == 'score':
+                if attributes[i] in ('score', 'a_b_v'):
                     continue
                 atts[2] = (attributes[i], vector[i])
                 atts.sort(key=lambda x: x[1], reverse = True)
@@ -204,7 +209,7 @@ def important_attributes(vector):
 
 def main():
     # Grab the beer names and attribute vectors from the database.
-    connection = sqlite3.connect('../processing/beers-db.sql')
+    connection = sqlite3.connect('../processing/breweries-db.sql')
     cursor = connection.cursor()
     cursor.execute('select * from beers')
     
@@ -212,8 +217,15 @@ def main():
     
     item = cursor.fetchone()
     while item is not None:
+<<<<<<< HEAD
         beername = unicode(item[0].strip())
         beers[beername] = item[1:]
+=======
+	beername = unicode(item[0].strip())
+        brewery = unicode(item[1].strip())
+        beers[beername] = {'brewery': brewery,
+                           'attributes': item[2:]}
+>>>>>>> 50c36a8996eaee6f65cfaa7c52576d58fd2da427
         item = cursor.fetchone()
         
     connection.close()
@@ -241,15 +253,19 @@ def main():
     # Ask the user for k. 
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
-    search_attributes = important_attributes(beers[input_beer])
+    search_attributes = important_attributes(beers[input_beer]['attributes'])
     print('\nSearching for beers with attributes like:'),
     print(', '.join(map(lambda x: x[0], search_attributes)))
     
-    nearest_beers = nearest_neighbors(k, beers[input_beer], beers)
+    nearest_beers = nearest_neighbors(k, beers[input_beer]['attributes'], beers)
     print '\nYou might like:'
     rank = 1
     for beer in nearest_beers:
-        print(str(rank) + '. ' + beer[0] + ' (matched on: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
+        print('%s. %s -- %s (similar attributes: %s)' % (rank,
+                                                        beer[0],
+                                                        beers[beer[0]]['brewery'],
+                                                        ', '.join(map(lambda x: attributes[x[0]], beer[2]))))
+        # print(str(rank) + '. ' + beer[0] + ' (similar attributes: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
         rank += 1
 
 if __name__ == '__main__':
