@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.2.12)  5 MAY 2013 12:34
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.2.12)  5 MAY 2013 17:02
 entering extended mode
 **C:/Users/Oren/Documents/Schoolwork/Spring*2013/Artificial*Intelligence/bee.rs
 /report/report.tex
@@ -227,11 +227,11 @@ LaTeX Font Info:    ... okay on input line 39.
 \makeMPintoPDFobject=\count115
 \everyMPtoPDFconversion=\toks30
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 48.
+LaTeX Font Info:    Try loading font information for U+msa on input line 42.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 48.
+LaTeX Font Info:    Try loading font information for U+msb on input line 42.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
@@ -247,7 +247,7 @@ Here is how much of TeX's memory you used:
  5814 multiletter control sequences out of 15000+200000
  11391 words of font info for 44 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 34i,8n,43p,876b,225s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 34i,8n,43p,1200b,225s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
 fonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfo
 nts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
@@ -256,7 +256,7 @@ cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmr6.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8
 .pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb
 >
-Output written on report.pdf (2 pages, 88936 bytes).
+Output written on report.pdf (2 pages, 90660 bytes).
 PDF statistics:
  37 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
