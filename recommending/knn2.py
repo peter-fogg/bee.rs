@@ -87,6 +87,7 @@ attributes = ['spices',
               'sweet',
               'malt',
               'light',
+              'a_b_v',
               'score']
 
 def edit_distance(s1, s2):
@@ -129,7 +130,7 @@ def distance_heuristic(edit, lcs):
         A heuristic to determine how close beernames are based on LCS
         and Levenshtein distance.
         '''
-    return lcs + (3.0/edit)
+    return lcs + ((3.0/edit) if edit else 0)
 
 def similar_beernames(beer, beers):
     '''
@@ -177,7 +178,7 @@ def nearest_neighbors(k, query, dataset):
         '''
     neighbors = []
     for example in dataset:
-        vector = dataset[example]
+        vector = dataset[example]['attributes']
         dist, relevant_attributes = manhattan_distance(vector, query)
         if len(neighbors) < k:
             neighbors.append((example, dist, relevant_attributes))
@@ -189,6 +190,10 @@ def nearest_neighbors(k, query, dataset):
     return neighbors
 
 def important_attributes(vector):
+    """
+        Given a vector representing a beer's attributes, returns a list
+        of the most relevant ones.
+        """
     atts = []
     for i in xrange(len(vector)):
         if len(atts) < 3:
@@ -196,15 +201,73 @@ def important_attributes(vector):
             atts.sort(key=lambda x: x[1], reverse = True)
         else:
             if vector[i] > atts[2][1]:
-                if attributes[i] == 'score':
+                if attributes[i] in ('score', 'a_b_v'):
                     continue
                 atts[2] = (attributes[i], vector[i])
                 atts.sort(key=lambda x: x[1], reverse = True)
     return atts
 
+def expand_class(input):
+    """
+        Given a beer name, find other beers liked by similar users
+        """
+    beers = [input]
+    fans = []
+    connection = sqlite3.connect('../processing/full-db.sql')
+    cursor = connection.cursor()
+    cursor.execute('select * from reviews where beername=?', ((input+' '),))
+
+    item = cursor.fetchone()
+
+    #build the list of fans of the beer
+    while item is not None:
+        if  item[3] > 4:
+            print "AY"
+            fans.append(item[2])
+        item = cursor.fetchone()
+
+    #now build the beers they like
+    index = 0
+    for fan in fans:
+        cursor.execute('select * from reviews where author = ?', (fan,))
+        item = cursor.fetchone()
+        while item is not None:
+            if item[3] > 4 and item[0] not in beers:
+                beers.append(item[0])
+            if (index%1000) == 0:
+                print index
+            index = index + 1
+            item = cursor.fetchone()
+    connection.close()
+    return beers
+
+def order_by_rank(beerslist, likedlist):
+    
+    return [beerslist[beer.strip('\', ')] for beer in sorted(likedlist, key=lambda x: -beerslist[str(x).strip('\', ')]['score'])]
+    
+#    beers= []
+#    for beer in likedlist:
+#        beer = str(beer).strip('()\', ')
+#        if not beers:
+#            beers = [beerslist[beer]]
+#        else:
+#            for x in range(0,len(beers)+1):
+#                cur = beers[x]
+#                if x == len(beers):
+#                    beers.append(beerslist[beer])
+#                    break
+#                elif beerslist[beer]['score'] < beerslist[cur]['score']:
+#                    beers.insert(x,beerslist[beer])
+#                    break
+#    final_list = []
+#    for x in range(0,k):
+#        if len(beers) > x:
+#            final_list.append(beers[x])
+#    return final_list
+
 def main():
     # Grab the beer names and attribute vectors from the database.
-    connection = sqlite3.connect('../processing/beers-db.sql')
+    connection = sqlite3.connect('../processing/breweries-db.sql')
     cursor = connection.cursor()
     cursor.execute('select * from beers')
     
@@ -213,7 +276,9 @@ def main():
     item = cursor.fetchone()
     while item is not None:
         beername = unicode(item[0].strip())
-        beers[beername] = item[1:]
+        brewery = unicode(item[1].strip())
+        beers[beername] = {'brewery': brewery,
+            'attributes': item[2:], 'score':item[-1]}
         item = cursor.fetchone()
     
     connection.close()
@@ -241,15 +306,21 @@ def main():
     # Ask the user for k.
     k = int(raw_input(u'How many similar beers would you like to see?: '))
 
-    search_attributes = important_attributes(beers[input_beer])
+    search_attributes = important_attributes(beers[input_beer]['attributes'])
     print('\nSearching for beers with attributes like:'),
     print(', '.join(map(lambda x: x[0], search_attributes)))
 
-    nearest_beers = nearest_neighbors(k, beers[input_beer], beers)
+    #build class of liked beers
+    liked_class = order_by_rank(beers, expand_class(input_beer))
+    
     print '\nYou might like:'
     rank = 1
-    for beer in nearest_beers:
-        print(str(rank) + '. ' + beer[0] + ' (matched on: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
+    for beer in liked_class:
+        if rank <= k:
+            print('%s. %s -- %s (similar attributes: %s)' % (rank,
+                                                        beer[0],
+                                                        beers[beer[0]]['brewery'],
+                                                             ', '.join(map(lambda x: attributes[x[0]], beer[2]))))
         rank += 1
 
 if __name__ == '__main__':

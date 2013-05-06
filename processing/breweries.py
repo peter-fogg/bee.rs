@@ -131,7 +131,7 @@ cursor.execute('CREATE TABLE beers (beername text, brewery text, %s real)' % ' r
 connection.commit()
 for beer in normalized_beers:
     cursor.execute('INSERT INTO beers VALUES (%s)' % ', '.join(['?'] * (len(attributes) + 4)),
-                   tuple([beer, normalized_beers[beer]['brewery']] + [normalized_beers[beer][attribute]
+                   tuple([beer, normalized_beers[beer]['brewery']] +  [normalized_beers[beer][attribute]
                                                                       for attribute in attributes + ['a_b_v', 'score']]))
     connection.commit()
 

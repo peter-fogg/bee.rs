@@ -217,15 +217,10 @@ def main():
     
     item = cursor.fetchone()
     while item is not None:
-<<<<<<< HEAD
         beername = unicode(item[0].strip())
-        beers[beername] = item[1:]
-=======
-	beername = unicode(item[0].strip())
         brewery = unicode(item[1].strip())
         beers[beername] = {'brewery': brewery,
                            'attributes': item[2:]}
->>>>>>> 50c36a8996eaee6f65cfaa7c52576d58fd2da427
         item = cursor.fetchone()
         
     connection.close()
