@@ -148,7 +148,7 @@ def similar_beernames(beer, beers):
            dist = 10000
         if dist > 5:
             similars.add((b, dist))
-    return map(lambda x: x[0], sorted(list(similars), key=lambda x: -x[1]))
+    return map(lambda x: x[0], sorted(list(similars), key=lambda x: -x[1]))[:20]
 
 def manhattan_distance(x1,x2):
     '''
