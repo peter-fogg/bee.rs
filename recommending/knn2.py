@@ -55,8 +55,6 @@ def expand_class(beerslist, input):
                     old = beers[cur]['fans']
                     old.append(author)
                     beers[cur]['fans'] = old
-            if (index%1000) == 0:
-                print index
             index = index + 1
             item = cursor.fetchone()
     connection.close()
