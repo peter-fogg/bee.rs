@@ -22,11 +22,11 @@ def important_attributes(vector):
                 atts.sort(key=lambda x: x[1], reverse = True)
     return atts
 
-def expand_class(input):
+def expand_class(beerslist, input):
     """
         Given a beer name, find other beers liked by similar users
         """
-    beers = [input]
+    beers = {}
     fans = []
     connection = sqlite3.connect('../processing/full-db.sql')
     cursor = connection.cursor()
@@ -46,36 +46,25 @@ def expand_class(input):
         cursor.execute('select * from reviews where author = ?', (fan,))
         item = cursor.fetchone()
         while item is not None:
-            if item[3] > 4 and item[0] not in beers:
-                beers.append(item[0])
+            author = item[2]
+            if item[3] > 4:
+                cur = item[0].strip()
+                if item[0] not in beers:
+                    beers[cur] = {'beername': cur, 'brewery': beerslist[cur]['brewery'], 'score': beerslist[cur]['score'], 'fans': [author]}
+                else:
+                    old = beers[cur]['fans']
+                    old.append(author)
+                    beers[cur]['fans'] = old
+            if (index%1000) == 0:
+                print index
             index = index + 1
             item = cursor.fetchone()
     connection.close()
     return beers
 
-def order_by_rank(beerslist, likedlist):
-    
-    return [beerslist[beer.strip('\', ')] for beer in sorted(likedlist, key=lambda x: -beerslist[str(x).strip('\', ')]['score'])]
-    
-#    beers= []
-#    for beer in likedlist:
-#        beer = str(beer).strip('()\', ')
-#        if not beers:
-#            beers = [beerslist[beer]]
-#        else:
-#            for x in range(0,len(beers)+1):
-#                cur = beers[x]
-#                if x == len(beers):
-#                    beers.append(beerslist[beer])
-#                    break
-#                elif beerslist[beer]['score'] < beerslist[cur]['score']:
-#                    beers.insert(x,beerslist[beer])
-#                    break
-#    final_list = []
-#    for x in range(0,k):
-#        if len(beers) > x:
-#            final_list.append(beers[x])
-#    return final_list
+def order_by_rank(likedlist):
+    #sort the list of liked beers by score
+    return [likedlist[beer] for beer in sorted(likedlist, key=lambda x: -likedlist[str(x)]['score'])]
 
 def main():
     # Grab the beer names and attribute vectors from the database.
@@ -123,13 +112,13 @@ def main():
     print(', '.join(map(lambda x: x[0], search_attributes)))
 
     #build class of liked beers
-    liked_class = order_by_rank(beers, expand_class(input_beer))
+    liked_class = order_by_rank(expand_class(beers, input_beer))
     
     print '\nYou might like:'
     rank = 1
     for beer in liked_class:
         if rank <= k:
-            print('%s. %s -- %s' % (rank, beer['beername'], beer['brewery']))
+            print('%s. %s -- %s (liked by: %s)' % (rank, beer['beername'], beer['brewery'], ', '.join(map(lambda x: x, beer['fans']))))
         rank += 1
 
 if __name__ == '__main__':
