@@ -6,3 +6,4 @@ scraping/*db_file
 *.aux
 *.log
 *.pdf
+*.pyc
