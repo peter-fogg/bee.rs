@@ -1,0 +1,18 @@
+Final Project Instructions
+CS 364
+Peter Fogg, Sayer Rippey, Oren Shoham
+
+Instructions for using our recommendation system:
+
+1) Set your current directory to ../bee.rs/recommending
+
+2) To use the content-based beer recommender, run "python knn.py".
+
+   To use the collaborative beer recommender, run "python knn2.py".
+
+3) You will be presented with a command-line prompt asking you to give the name of
+   a beer that you like. If the name you supply is not in our database, our program
+   will present you with a series of similar beer names from our database, each followed
+   by a yes/no prompt. If you accept one of the suggestions (or your input beer is in
+   our database), you will be asked how many recommendations you want to see. Once you
+   give a number (integer values only), the program should give you a list of beers.
