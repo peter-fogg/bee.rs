@@ -59,10 +59,15 @@ The system is broken up into three parts -- data collection, data processing, an
 \subsection*{Evaluation}
 Given that beer preferences are an entirely subjective matter, we used a qualitative approach to our testing. When prompted with a beer that the user likes, the system should respond with similar beers. Better yet, the results should contain other beers that the user likes -- this is a good indication that the system is capable of determining the user's preferences.
 
-Our results are promising. The system always returns beers of a similar style and quality, and often gives beers that the testers are known to enjoy.
-\subsection*{Related Work}
+Our results are promising. The system always returns beers of a similar style and quality, and often gives beers that the testers are known to enjoy. Hands-on testing indicates that beers unknown to the tester are highly likely to be enjoyed.
 
+What's particularly interesting is that the results are almost always of the same type -- for example, given a stout as input, the suggestions are mostly stouts and porters. The system knows nothing about different styles of brewing, but nonetheless is able to essentially identify the genre.
 \subsection*{Future Work}
+There are a few directions that could be taken going forward. Currently the system only uses one beer as input. While this is effective, it is somewhat limiting -- an IPA as an input beer generally gives all IPAs or pale ales as recommendations, because the system has no knowledge of the user's diversity of taste. By giving a varied input set, the system can give a less restricted set of recommendations. This would require a different algorithmic approach; support-vector machines would likely work well here.
 
+We can also track the user's preferences over time, by creating an account for each user. This would allow the user to receive a few suggestions, head to the store, try them out, and get updated recommendations based on the new data. This allows the possibility of an upvote-downvote system, similar to Pandora's. The system currently uses only two classifications, ``liked'' or ``unknown''. Adding downvotes allows an explicit ``disliked'' classification.
+
+The idea of a user account immediately suggests deploying this as a webapp. While not theoretically interesting, this would bring the benefits of beer recommendations to the entire world.
 \subsection*{Conclusion}
+Using simple NLP techniques, we were able to concisely describe complex attributes of a beer's flavor. After that, the actual recommendation is a simple distance function and a few sorts. Despite the apparent lack of sophistication, our system is quite effective. It successfully identifies the most important attributes of a beer, and is able to accurately suggest other beers which the user likes.
 \end{document}
