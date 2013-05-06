@@ -4,7 +4,7 @@ import collections
 import sqlite3
 
 DB_FILENAME = './full-db.sql'
-
+/Users/sayerrippey/Desktop/school/artificial intelligence/bee.rs/bee.rs/processing/process.py
 connection = sqlite3.connect(DB_FILENAME)
 
 cursor = connection.cursor()
