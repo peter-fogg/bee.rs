@@ -46,7 +46,6 @@ def expand_class(beerslist, input):
         cursor.execute('select * from reviews where author = ?', (fan,))
         item = cursor.fetchone()
         while item is not None:
-<<<<<<< HEAD
             author = item[2]
             if item[3] > 4:
                 cur = item[0].strip()
@@ -58,10 +57,6 @@ def expand_class(beerslist, input):
                     beers[cur]['fans'] = old
             if (index%1000) == 0:
                 print index
-=======
-            if item[3] > 4 and item[0] not in beers:
-                beers.append(item[0])
->>>>>>> 32d79fe3b24fdede42403bb25585d60f1e5b0ce8
             index = index + 1
             item = cursor.fetchone()
     connection.close()
