@@ -260,7 +260,6 @@ def main():
                                                         beer[0],
                                                         beers[beer[0]]['brewery'],
                                                         ', '.join(map(lambda x: attributes[x[0]], beer[2]))))
-        # print(str(rank) + '. ' + beer[0] + ' (similar attributes: ' + ', '.join(map(lambda x: attributes[x[0]], beer[2])) + ')')
         rank += 1
 
 if __name__ == '__main__':

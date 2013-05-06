@@ -314,10 +314,7 @@ def main():
     rank = 1
     for beer in liked_class:
         if rank <= k:
-            print('%s. %s -- %s (similar attributes: butts)' % (rank,
-                                                        beer['beername'],
-                                                        beer['brewery'],))
-                                                             #    ', '.join(map(lambda x: attributes[x[0]], beer['attributes']))))
+            print('%s. %s -- %s' % (rank, beer['beername'], beer['brewery']))
         rank += 1
 
 if __name__ == '__main__':

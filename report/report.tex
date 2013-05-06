@@ -73,6 +73,7 @@ There are a few directions that could be taken going forward. Currently the syst
 We can also track the user's preferences over time, by creating an account for each user. This would allow the user to receive a few suggestions, head to the store, try them out, and get updated recommendations based on the new data. This allows the possibility of an upvote-downvote system, similar to Pandora's. The system currently uses only two classifications, ``liked'' or ``unknown''. Adding downvotes allows an explicit ``disliked'' classification.
 
 The idea of a user account immediately suggests deploying this as a webapp. While not theoretically interesting, this would bring the benefits of beer recommendations to the entire world.
+
 \subsection*{Conclusion}
 Using simple NLP techniques, we were able to concisely describe complex attributes of a beer's flavor. After that, the actual recommendation is a simple distance function and a few sorts. Despite the apparent lack of sophistication, our system is quite effective. It successfully identifies the most important attributes of a beer, and is able to accurately suggest other beers which the user likes.
 \end{document}
