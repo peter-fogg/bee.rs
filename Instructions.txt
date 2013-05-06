@@ -1,4 +1,4 @@
-Final Project README
+Final Project Instructions
 CS 364
 Peter Fogg, Sayer Rippey, Oren Shoham
 
