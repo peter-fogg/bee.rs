@@ -30,15 +30,18 @@ def expand_class(beerslist, input):
     fans = []
     connection = sqlite3.connect('../processing/full-db.sql')
     cursor = connection.cursor()
-    cursor.execute('select * from reviews where beername=?', ((input+' '),))
+    cursor.execute('select * from reviews where beername= ?', ((input+' '),))
 
     item = cursor.fetchone()
 
     #build the list of fans of the beer
     while item is not None:
-        if  item[3] > 4:
-            fans.append(item[2])
+        if  item[3] > 3.5:
+            username = item[2]
+            if username not in fans:
+                fans.append(username)
         item = cursor.fetchone()
+
 
     #now build the beers they like
     index = 0
@@ -47,16 +50,15 @@ def expand_class(beerslist, input):
         item = cursor.fetchone()
         while item is not None:
             author = item[2]
-            if item[3] > 4:
+            if item[3] > 3.6:
                 cur = item[0].strip()
                 if item[0] not in beers:
                     beers[cur] = {'beername': cur, 'brewery': beerslist[cur]['brewery'], 'score': beerslist[cur]['score'], 'fans': [author]}
                 else:
                     old = beers[cur]['fans']
-                    old.append(author)
+                    if author not in old:
+                        old.append(author)
                     beers[cur]['fans'] = old
-            if (index%1000) == 0:
-                print index
             index = index + 1
             item = cursor.fetchone()
     connection.close()
@@ -64,7 +66,7 @@ def expand_class(beerslist, input):
 
 def order_by_rank(likedlist):
     #sort the list of liked beers by score
-    return [likedlist[beer] for beer in sorted(likedlist, key=lambda x: -likedlist[str(x)]['score'])]
+    return [likedlist[beer] for beer in sorted(likedlist, key=lambda x: -len(likedlist[x]['fans']))]
 
 def main():
     # Grab the beer names and attribute vectors from the database.
