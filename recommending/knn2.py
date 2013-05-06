@@ -222,7 +222,6 @@ def expand_class(input):
     #build the list of fans of the beer
     while item is not None:
         if  item[3] > 4:
-            print "AY"
             fans.append(item[2])
         item = cursor.fetchone()
 
@@ -234,8 +233,6 @@ def expand_class(input):
         while item is not None:
             if item[3] > 4 and item[0] not in beers:
                 beers.append(item[0])
-            if (index%1000) == 0:
-                print index
             index = index + 1
             item = cursor.fetchone()
     connection.close()
