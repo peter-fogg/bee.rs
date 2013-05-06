@@ -142,13 +142,13 @@ def similar_beernames(beer, beers):
     beer = beer.strip().lower()
     similars = set()
     for b in beers:
-        lcs = longest_common_subsequence(beer, b.strip().lower())
-        dist = edit_distance(beer, b.strip().lower())
-        if dist < 3 or lcs > .75*len(beer):
-            similars.add((b, distance_heuristic(dist, lcs)))
+        dist = distance_heuristic(edit_distance(beer, b.strip().lower()),
+                                  longest_common_subsequence(beer, b.strip().lower()))
         if beer in b.strip().lower():
-            similars.add((b, 0))
-    return map(lambda x: x[0], sorted(list(similars), key=lambda x: x[1]))
+           dist = 10000
+        if dist > 5:
+            similars.add((b, dist))
+    return map(lambda x: x[0], sorted(list(similars), key=lambda x: -x[1]))
 
 def manhattan_distance(x1,x2):
     '''
@@ -236,7 +236,7 @@ def main():
             input_beer = raw_input(u'We could not recognize this beer. Please enter another: ')
             possibilities = similar_beernames(input_beer, beers)
         for i, possibility in enumerate(possibilities):
-            print(u'%d. Did you mean %s? (y/n) ' % (i, possibility)),
+            print(u'%d. Did you mean %s? (y/n) ' % (i + 1, possibility)),
             feedback = raw_input('')
             if u'y' in feedback:
                 input_beer = possibility

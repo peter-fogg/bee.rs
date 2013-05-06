@@ -278,7 +278,7 @@ def main():
         beername = unicode(item[0].strip())
         brewery = unicode(item[1].strip())
         beers[beername] = {'brewery': brewery,
-            'attributes': item[2:], 'score':item[-1]}
+            'attributes': item[2:], 'score':item[-1], 'beername': beername}
         item = cursor.fetchone()
     
     connection.close()
@@ -317,10 +317,10 @@ def main():
     rank = 1
     for beer in liked_class:
         if rank <= k:
-            print('%s. %s -- %s (similar attributes: %s)' % (rank,
-                                                        beer[0],
-                                                        beers[beer[0]]['brewery'],
-                                                             ', '.join(map(lambda x: attributes[x[0]], beer[2]))))
+            print('%s. %s -- %s (similar attributes: butts)' % (rank,
+                                                        beer['beername'],
+                                                        beer['brewery'],))
+                                                             #    ', '.join(map(lambda x: attributes[x[0]], beer['attributes']))))
         rank += 1
 
 if __name__ == '__main__':
