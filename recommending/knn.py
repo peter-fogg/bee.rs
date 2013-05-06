@@ -217,7 +217,7 @@ def main():
     
     item = cursor.fetchone()
     while item is not None:
-	beername = unicode(item[0].strip())
+        beername = unicode(item[0].strip())
         brewery = unicode(item[1].strip())
         beers[beername] = {'brewery': brewery,
                            'attributes': item[2:]}
